@@ -52,7 +52,7 @@ function onFormSubmit(e) {
    // 予約日を変数「Cancel_day」に代入
      let Cancel_day = e.values[4];
 
-   // 予約番号を変数「Cancel_NO」に代入
+   // 予約番号を変数「cancel_NO」に代入
      let cancel_NO = e.values[5];
 
    // 登録時のデータを取得
@@ -71,13 +71,13 @@ function onFormSubmit(e) {
        console.log("キャンセルされた予約の予約順：" + Database_cancel_Ranking)
 
    // エラーメッセージ用の変数作成
-     let Error_reason = "error_reason"
+     let Error_reason = "known_error"
 
 
    // ログを書く
      console.log("変数設定完了");
 
-   // カレンダーオブジェクトを取得(赤い文字がカレンダーID。これは予定を入れる先のカレンダーIDを手入力)
+   // カレンダーオブジェクトを取得
    //  ※「Calendar」が実行されたときに動く内容を設定
      let Calendar = CalendarApp.getCalendarById(Calendar_ID);
 
@@ -89,28 +89,26 @@ function onFormSubmit(e) {
  // 自動初期設定終了
 
 
- // OKパターン
+ // Can_Cleaningを実行したときにやること
    let Can_Cleaning = function(Name) {
-       let Find_events = 　Calendar.getEventsForDay(new Date(Cancel_day), {search: Database_cancel_Ranking})
-     // もし、キャンセル日に予約者の名前があったときに、
-       if (Find_events.length) {
-         for (const event of Find_events) {
-           //イベントタイトルにRankingの数字が含まれていれば、削除
-             const eventTitle = event.getTitle();
-             if(eventTitle.indexOf(Database_cancel_Ranking) !== -1){
-               event.deleteEvent();
-              }//if
-          }//for
+     let Find_events = 　Calendar.getEventsForDay(new Date(Cancel_day), {search: Database_cancel_Ranking})
+     // もし、キャンセル日にDatabase_cancel_Rankingがあったときに、
+     if (Find_events.length) {
+       for (const event of Find_events) {
+       //イベントタイトルにDatabase_cancel_Rankingの数字が含まれていれば、削除
+         const eventTitle = event.getTitle();
+         if(eventTitle.indexOf(Database_cancel_Ranking) !== -1){event.deleteEvent();}
+        }
 
-         // ログを書く
-           console.log(Name + "さんの" + Cancel_day + "の" + Database_cancel_Ranking + "番の予約を削除完了")
+       // ログを書く
+         console.log(Name + "さんの" + Cancel_day + "の" + Database_cancel_Ranking + "番の予約を削除完了")
 
-         //　自動返信メール
-           // 件名を変数「Subject」に代入
-             let Subject ="【" + Name + "様へ】　削除完了しました";
+       //　自動返信メール
+         // 件名を変数「Subject」に代入
+           let Subject ="【" + Name + "様へ】　削除完了しました";
    
-           // 本文を変数「Body」に代入
-             let Body = 
+         // 本文を変数「Body」に代入
+           let Body = 
              "---------------------------------------------" + "\n"
              + "※このメールは自動送信しておりますので、このメールにご返信いただいてもお答えできませんのでご了承ください。"+ "\n"
              + "※お心当たりがない場合は、メールの破棄をお願いいたします。" + "\n"
@@ -134,23 +132,24 @@ function onFormSubmit(e) {
              + "工学院大学附属中学校・高等学校　デジタルクリエイター育成同好会　ものづくり班" + "\n"
              + "============================================";
 
-           // メール送信
-             MailApp.sendEmail(Email,Subject,Body);
+         // メール送信
+           MailApp.sendEmail(Email,Subject,Body);
 
-           // ログを書く
-             console.log("完了メール送信完了")
-     } else {
-       //予定がなかった時に
+         // ログを書く
+           console.log("完了メール送信完了")
+       } else {
+         //予定がなかった時に
          let Error_reason = "指定された予約は削除済みであったため、削除できませんでした。"
          Can_Not_Cleaning(Error_reason);
+       }
+
+       // functionの終了
+         return Name;
      }
-
-     // functionの終了
-       return Name;
-   }
+ // Can_Cleaningを実行したときにやること終了
 
 
- // 失敗時のメール送信
+ // Can_Not_Cleaningを実行したときにやること
    let Can_Not_Cleaning = function(Error_reason) {
    //　自動返信メール
      // 件名を変数「Subject」に代入
@@ -186,12 +185,13 @@ function onFormSubmit(e) {
      // メール送信
        MailApp.sendEmail(Email,Subject,Body);
 
-     // ログを書く
-       console.log("削除エラーメールを送信完了")
+   // ログを書く
+     console.log("削除エラーメールを送信完了")
 
-     // functionの終了
-      return Error_reason;
-  }
+   // functionの終了
+     return Error_reason;
+   }
+ // Can_not_Cleaningを実行したときにやること終了
 
 
  //メインプロセス
@@ -199,16 +199,17 @@ function onFormSubmit(e) {
      if (Number(cancel_NO) === Number(database_cancel_NO)) {
      // キャンセル時のメールアドレスと登録時のメールアドレスが同じなら、
        if (Email === Database_cancel_Email) {
-       // OKパターン
+         // OKパターン
          Can_Cleaning(Name);
          console.log("削除完了")
        } else {
+         // メルアドミスの失敗パターン
          let Error_reason = "メールアドレスが予約時と異なります。"
          Can_Not_Cleaning(Error_reason);
          console.log("予約削除失敗")
        }
      } else {
-       // ダメパターン
+       // 予約番号が見つからない失敗パターン
        let Error_reason = "あなたのメールアドレスでその予約は行われていません。"
        Can_Not_Cleaning(Error_reason);
        console.log("予約削除失敗")
