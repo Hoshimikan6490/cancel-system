@@ -78,7 +78,7 @@ function onFormSubmit(e) {
    // ログを書く
      console.log("変数設定完了");
 
-   // カレンダーオブジェクトを取得(赤い文字がカレンダーID。これは予定を入れる先のカレンダーIDを手入力)
+   // カレンダーオブジェクトを取得
    //  ※「Calendar」が実行されたときに動く内容を設定
      let Calendar = CalendarApp.getCalendarById(Calendar_ID);
 
