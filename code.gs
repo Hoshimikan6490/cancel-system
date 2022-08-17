@@ -1,58 +1,27 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-// ★本番バージョン制作手順
-//　　①Formsの内容をコピー
-//　　②①のFormsからExcelを開く
-//　　③Excelの列の順番を「タイムスタンプ、４桁番号、氏名、メールアドレス、予約日、補助の必要性、備考」の順番に変更する。
-//　　　　※その他は備考欄よりも右側においてあればOK
-//　　④拡張機能＞app scriptから、エディターを起動
-//　　⑤「コード.gs」にプログラムをコピー
-//　　　　※既存の内容を書き換える
-//　　⑥Googleの共有カレンダーを作成
-//　　⑦Googleカレンダーのタイムゾーン設定を「Asia/Tokyo」に設定
-//　　⑧共有カレンダーのカレンダーIDを設定
-//　　⑨Apps Scriptの設定から、「『appsscript.json』マニフェスト ファイルをエディタで表示する」をONにする。
-//　　⑩「appsscript.json」とGoogleカレンダーの標準時刻を”Asia/Tokyo”にする。
-//　　⑪以下の設定でトリガーを設定して、保存
-// 　　　・実行する関数：onFormSubmit
-// 　　　・実行するデプロイ：Head
-// 　　　・イベントのソース：スプレッドシートから
-// 　　　・イベントの種類：フォーム送信時
-// 　　　・エラー通知：１週間おきに通知を受け取る
-/////////////////////////////////////////////////////////////////////////////////////////
-
 function onFormSubmit(e) {
  //　手動初期設定
    // カレンダーIDを指定
      let Calendar_ID = "~~~@group.calendar.google.com";
-
    // GoogleカレンダーのURLを指定
      let Calendar_URL = "https://calendar.google.com/calendar/~~~";
-
    //　データベース用のスプレッドシートのURLを設定
      let Database_spr_url = "https://docs.google.com/spreadsheets/~~~";
- 
    // 登録用スプレッドシートの統計データが記録されたシートの名前を設定
-     let Database_sheet = "統計データ"
-
+     let Database_sheet = "○○○○"
  // 手動初期設定完了
 
 
  // 自動初期設定
    // タイムスタンプを変数「TimeStamp」に代入
      let TimeStamp = e.values[0];
-
    // ４桁番号を変数「CLNO」に代入
      let CLNO = e.values[1];
-    
    // 氏名を変数「Name」に代入
      let Name = e.values[2];
-    
    // メールアドレスを変数「Email」に代入
      let Email = e.values[3];
-    
    // 予約日を変数「Cancel_day」に代入
      let Cancel_day = e.values[4];
-
    // 予約番号を変数「Cancel_NO」に代入
      let cancel_NO = e.values[5];
 
@@ -73,8 +42,6 @@ function onFormSubmit(e) {
 
    // エラーメッセージ用の変数作成
      let Error_reason = "error_reason"
-
-
    // ログを書く
      console.log("変数設定完了");
 
@@ -102,14 +69,12 @@ function onFormSubmit(e) {
                event.deleteEvent();
               }//if
           }//for
-
          // ログを書く
            console.log(Name + "さんの" + Cancel_day + "の" + Database_cancel_Ranking + "番の予約を削除完了")
 
-         //　自動返信メール
+        //　自動返信メール
            // 件名を変数「Subject」に代入
              let Subject ="【" + Name + "様へ】　削除完了しました";
-   
            // 本文を変数「Body」に代入
              let Body = 
                Name + "様" +"\n"
@@ -139,10 +104,8 @@ function onFormSubmit(e) {
                + "============================================" + "\n"
                + "3Dプリンター　管理者" + "\n"
                + "============================================";
-
            // メール送信
              MailApp.sendEmail(Email,Subject,Body);
-
            // ログを書く
              console.log("完了メール送信完了")
      } else {
@@ -150,7 +113,6 @@ function onFormSubmit(e) {
          let Error_reason = "指定された予約は削除済みであったため、削除できませんでした。"
          Can_Not_Cleaning(Error_reason);
      }
-
      // functionの終了
        return Name;
    }
@@ -161,7 +123,6 @@ function onFormSubmit(e) {
    //　自動返信メール
      // 件名を変数「Subject」に代入
        let Subject ="【" + Name + "様へ】　削除失敗！！";
-  
      // 本文を変数「Body」に代入
        let Body = 
          Name + "様" +"\n"
@@ -193,13 +154,10 @@ function onFormSubmit(e) {
          + "============================================" + "\n"
          + "3Dプリンター　管理者" + "\n"
          + "============================================";
- 
      // メール送信
        MailApp.sendEmail(Email,Subject,Body);
-
-     // ログを書く
+    // ログを書く
        console.log("削除エラーメールを送信完了")
-
      // functionの終了
       return Error_reason;
   }
