@@ -9,7 +9,8 @@
 ---
 # 予約システムについて
 
-　予約システムは、[こちら](https://github.com/Hoshimikan6490/cancel-system)です。 
+　予約システムは、[こちら](https://github.com/Hoshimikan6490/cancel-system)です。
+ 
 　※__**改良版(more_new_program)では本プログラムは使用しません**__。↑こちらのみをご使用ください。
 
 ---
